@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6676DF322D2FD91E00C3F04B /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = 6676DF312D2FD91E00C3F04B /* SwiftyGif */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6649A4932D2EDFA700A78FBA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -22,6 +26,19 @@
 			remoteInfo = Giphy;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6676DF242D2FD49C00C3F04B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		6649A4822D2EDFA500A78FBA /* Giphy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Giphy.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6676DF322D2FD91E00C3F04B /* SwiftyGif in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +96,7 @@
 				6649A4842D2EDFA500A78FBA /* Giphy */,
 				6649A4952D2EDFA700A78FBA /* GiphyTests */,
 				6649A49F2D2EDFA700A78FBA /* GiphyUITests */,
+				6676DF302D2FD91E00C3F04B /* Frameworks */,
 				6649A4832D2EDFA500A78FBA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,6 +111,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		6676DF302D2FD91E00C3F04B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -102,6 +128,7 @@
 				6649A47E2D2EDFA500A78FBA /* Sources */,
 				6649A47F2D2EDFA500A78FBA /* Frameworks */,
 				6649A4802D2EDFA500A78FBA /* Resources */,
+				6676DF242D2FD49C00C3F04B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -112,6 +139,7 @@
 			);
 			name = Giphy;
 			packageProductDependencies = (
+				6676DF312D2FD91E00C3F04B /* SwiftyGif */,
 			);
 			productName = Giphy;
 			productReference = 6649A4822D2EDFA500A78FBA /* Giphy.app */;
@@ -195,6 +223,9 @@
 			);
 			mainGroup = 6649A4792D2EDFA500A78FBA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6676DF2F2D2FD90800C3F04B /* XCRemoteSwiftPackageReference "SwiftyGif" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6649A4832D2EDFA500A78FBA /* Products */;
 			projectDirPath = "";
@@ -558,6 +589,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6676DF2F2D2FD90800C3F04B /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kirualex/SwiftyGif.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.4.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6676DF312D2FD91E00C3F04B /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6676DF2F2D2FD90800C3F04B /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			productName = SwiftyGif;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6649A47A2D2EDFA500A78FBA /* Project object */;
 }
