@@ -11,7 +11,7 @@ import SwiftUI
 struct GiphyApp: App {
     var body: some Scene {
         WindowGroup {
-            GifGridView()
+            MainView()
         }
     }
 }

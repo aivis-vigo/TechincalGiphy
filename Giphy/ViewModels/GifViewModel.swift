@@ -9,13 +9,18 @@ import Foundation
 import Combine
 
 class GifViewModel: ObservableObject {
+    private let service: ImageServiceProtocol
+    
     // @Published - whenever this value changes send announcement to reload the views
-    @Published var trendingCollection: [Gif] = []
+    @Published var trendingResults: [Gif] = []
     @Published var searchResults: [Gif] = []
+    
+    var imageError: GifError?
+    var showError: Bool = false
+    
     // @PassthroughObject - broadcasts elements to downstream subs
     private var userInputSearchSubject = PassthroughSubject<String, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private let service: ImageServiceProtocol
     
     init(service: ImageServiceProtocol = ImageService()) {
         self.service = service
@@ -30,6 +35,10 @@ class GifViewModel: ObservableObject {
         userInputSearchSubject
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] prompt in
+                /*
+                    clear out previous results before giving the new results
+                */
+                self?.searchResults.removeAll()
                 Task {
                     await self?.fetchBySearchQuery(searchInput: prompt)
                 }
@@ -46,47 +55,36 @@ class GifViewModel: ObservableObject {
     }
         
     func fetchTrendingImages() async -> Void {
-        Task {
-            await service.fetchTrendingImages { result in
-                DispatchQueue.main.async {
-                    switch result {
-                        case .success(let images):
-                            // todo: handle this
-                            self.trendingCollection.append(contentsOf: images)
-                        case .failure(let error):
-                            self.handleImageError(error)
-                    }
-                }
+        /*
+            @MainActor has to be used because because @Published property is being updated
+         
+            @MainActor executes tasks on the main thread
+        */
+        Task { @MainActor in
+            do {
+                let trendingImages = try await service.fetchTrendingImages()
+                self.trendingResults.append(contentsOf: trendingImages)
+            } catch let error as GifError {
+                showError = true
+                imageError = error
+            } catch {
+                imageError = .unexpected
             }
         }
     }
     
     func fetchBySearchQuery(searchInput: String) async -> Void {
-        Task {
-            await service.fetchBySearchQuery(prompt: searchInput) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let images):
-                        self.searchResults.append(contentsOf: images)
-                    case .failure(let error):
-                        self.handleImageError(error)
-                    }
-                }
+        Task { @MainActor in
+            do {
+                let searchResults = try await service.fetchBySearchQuery(prompt: searchInput)
+                self.searchResults.append(contentsOf: searchResults)
+            } catch let error as GifError {
+                showError = true
+                imageError = error
+            } catch {
+                imageError = .unexpected
             }
         }
-    }
-    
-    func handleImageError(_ error: GifError) -> Void {
-        let errorMessage: String
-        switch error {
-            case .invalidURL:
-                errorMessage = "Invalid URL"
-            case .invalidResponse:
-                errorMessage = "Invalid Response"
-            case .invalidData:
-                errorMessage = "Invalid Data"
-        }
-        print("Error: \(errorMessage)")
     }
     
 }

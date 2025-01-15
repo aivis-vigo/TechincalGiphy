@@ -7,79 +7,91 @@
 
 import Foundation
 
+/*
+    class needs to have these methods
+*/
+
 protocol ImageServiceProtocol {
-    func fetchTrendingImages(completion: @escaping (Result<[Gif], GifError>) -> Void) async
-    func fetchBySearchQuery(prompt: String, completion: @escaping (Result<[Gif], GifError>) -> Void) async
+    func fetchTrendingImages() async throws -> [Gif]
+    func fetchBySearchQuery(prompt: String) async throws -> [Gif]
 }
 
-// todo: should it be final class
+/*
+    final - class isn't meant to be inherited
+*/
+
 final class ImageService: ImageServiceProtocol {
-    // todo: hide api key
+    private let apiKey: String
     let baseUrl: String = "https://api.giphy.com/v1/gifs"
-    let apiKey: String = "ZssRaHY74NTtggDA8fQ7JnPI2lKQk7Xw"
     let limit: Int = 50
     var offset: Int = 0
     
-    func fetchTrendingImages(completion: @escaping (Result<[Gif], GifError>) -> Void) async -> Void {
+    init() {
+        self.apiKey = ImageService.loadAPIKey()
+    }
+    
+    private static func loadAPIKey() -> String {
+        guard let path = Bundle.main.path(forResource: "secret-config", ofType: "plist"),
+              let plist = NSDictionary(contentsOfFile: path),
+              let apiKey = plist["GIPHY_API_KEY"] as? String else {
+            fatalError("Missing GIPHY_API_KEY in secret-config.plist")
+        }
+        return apiKey
+    }
+    
+    func fetchTrendingImages() async throws -> [Gif] {
         let endpoint = "\(baseUrl)/trending?api_key=\(apiKey)&limit=\(limit)&offset=\(offset)&rating=g&bundle=messaging_non_clips"
          
         guard let url = URL(string: endpoint) else {
-            completion(.failure(.invalidURL))
-            return
+            throw GifError.invalidURL
         }
         
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                completion(.failure(.invalidResponse))
-                return
+                throw GifError.invalidResponse
             }
             
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let gifResponse = try decoder.decode(Gifs.self, from: data)
             
-            // todo: explain this
             Task { @MainActor in
                 self.offset += gifResponse.data.count
             }
             
-            completion(.success(gifResponse.data))
+            return Array(gifResponse.data)
         } catch {
-            completion(.failure(.invalidData))
+            throw GifError.invalidData
         }
     }
     
-    func fetchBySearchQuery(prompt: String, completion: @escaping (Result<[Gif], GifError>) -> Void) async -> Void {
+    func fetchBySearchQuery(prompt: String) async throws -> [Gif] {
         let endpoint = "\(baseUrl)/search?api_key=\(apiKey)&q=\(prompt)&limit=\(limit)&offset=0&rating=g&lang=en&bundle=messaging_non_clips"
         
         guard let url = URL(string: endpoint) else {
-            completion(.failure(.invalidURL))
-            return
+            throw GifError.invalidURL
         }
         
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                completion(.failure(.invalidResponse))
-                return
+                throw GifError.invalidResponse
             }
             
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let gifResponse = try decoder.decode(Gifs.self, from: data)
             
-            // todo: this may not be needed
             Task { @MainActor in
                 self.offset += gifResponse.data.count
             }
             
-            completion(.success(gifResponse.data))
+            return Array(gifResponse.data)
         } catch {
-            completion(.failure(.invalidData))
+            throw GifError.invalidData
         }
     }
-    
 }
