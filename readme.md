@@ -25,5 +25,16 @@ This is a Swift-based iOS application that integrates with the Giphy API to sear
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/giphy-app.git
+   git clone https://github.com/your-repo/giphy-app.git```
 
+2. Create a secret-config.plist with your Giphy API key
+
+## Example Code
+
+1. Fetching Trending GIFs:
+   ```bash
+   let trendingGifs = try await imageService.fetchTrendingImages()```
+
+2. Searching GIFs:
+   ```bash
+   let searchResults = try await imageService.fetchBySearchQuery(prompt: "funny")```
