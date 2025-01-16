@@ -33,8 +33,10 @@ This is a Swift-based iOS application that integrates with the Giphy API to sear
 
 1. Fetching Trending GIFs:
    ```bash
-   let trendingGifs = try await imageService.fetchTrendingImages()```
+   let trendingGifs = try await imageService.fetchTrendingImages()
+   ```
 
 2. Searching GIFs:
    ```bash
-   let searchResults = try await imageService.fetchBySearchQuery(prompt: "funny")```
+   let searchResults = try await imageService.fetchBySearchQuery(prompt: "funny")
+   ```
